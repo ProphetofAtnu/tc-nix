@@ -1,9 +1,6 @@
 { config, lib, nixpkgs, modulesPath, pkgs, ... }:
 
 {
-  imports = [ # Include the results of the hardware scan.
-  ];
-
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.blacklistedKernelModules = [ "pinctrl_elkhartlake" ];
@@ -49,10 +46,9 @@
   ];
 
   services.openssh.enable = true;
-  # networking.useDHCP = lib.mkDefault true;
 
 
-  system.stateVersion = "24.11"; # Did you read the comment?
+  system.stateVersion = "24.11";
 
 }
 
