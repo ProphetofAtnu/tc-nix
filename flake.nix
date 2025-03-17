@@ -12,51 +12,27 @@
   outputs = { self, nixpkgs, home-manager, disko, ... }@inputs:
     let 
       system = "x86_64-linux";
-      pkgs = import nixpkgs { inherit system; };
+      pkgs = nixpkgs.legacyPackages.${system};
     in
-
       {
-      formatter."x86_64-linux" = pkgs.nixfmt-classic;
+      formatter.${system} = pkgs.nixfmt-classic;
+      homeManagerModules.openboxConfig = import ./modules/openboxConfigure.nix;
 
       nixosConfigurations.vm = nixpkgs.lib.nixosSystem {
-        inherit system;
-        specialArgs = { inherit inputs; };
         modules = [
           ./configuration.nix
           home-manager.nixosModules.home-manager
           {
             home-manager.extraSpecialArgs = {
-              inherit inputs;
-              flake = self;
+              self = self;
             };
+            home-manager.sharedModules = [ self.homeManagerModules.openboxConfig ]; 
             home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = false;
+            home-manager.useUserPackages = true;
             home-manager.users.thinclient = import ./homes/home.nix;
           }
+          { nixpkgs.hostPlatform = "x86_64-linux"; }
         ];
       };
-
-      nixosConfigurations.physical = nixpkgs.lib.nixosSystem {
-        inherit system;
-        specialArgs = { inherit inputs; };
-        modules = [
-          disko.nixosModules.disko
-          ./configuration.nix
-          ./disk-config.nix
-          ./hardware-configuration.nix
-          ./networking.nix
-          home-manager.nixosModules.home-manager
-          {
-            home-manager.extraSpecialArgs = {
-              inherit inputs;
-              flake = self;
-            };
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = false;
-            home-manager.users.thinclient = import ./homes/home.nix;
-          }
-        ];
-      };
-
     };
 }

@@ -1,7 +1,6 @@
-{ config, pkgs, home, flake, ... }: {
-  imports = [ ../modules/openboxConfigure.nix ];
-
-  home.packages = [ pkgs.obconf pkgs.remmina ];
+{ config, pkgs, home, ... }: {
+  # imports = [  ];
+  # imports = [ self.homeManagerModules.openboxConfig ];
 
   home.username = "thinclient";
   home.homeDirectory = "/home/thinclient";
@@ -28,7 +27,6 @@
       Restart = "always";
     };
   };
-  programs.bash.enable = true;
 
   openboxConfigure.enable = true;
 

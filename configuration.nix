@@ -2,6 +2,7 @@
 
 {
   imports = [ # Include the results of the hardware scan.
+    (modulesPath + "/profiles/minimal.nix")
   ];
 
   boot.loader.systemd-boot.enable = true;
@@ -15,6 +16,12 @@
 
   users.users.thinclient = {
     isNormalUser = true;
+    hashedPassword = "";
+  };
+
+  users.users.admin = {
+    isNormalUser = true;
+    extraGroups = ["wheel"];
     hashedPassword = "";
   };
 
@@ -51,8 +58,6 @@
   services.openssh.enable = true;
   # networking.useDHCP = lib.mkDefault true;
 
-
   system.stateVersion = "24.11"; # Did you read the comment?
-
 }
 
