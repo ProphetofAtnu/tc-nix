@@ -6,14 +6,12 @@
   home.homeDirectory = "/home/thinclient";
   home.file.".xinitrc" = {
     text = ''
-      xset -dpms
-      xset s noblank
+      xset s off -dpms
     '';
   };
   home.file.".xprofile" = {
     text = ''
-      xset -dpms
-      xset s noblank
+      xset s off -dpms
     '';
   };
 
