@@ -10,6 +10,8 @@
   boot.blacklistedKernelModules = [ "pinctrl_elkhartlake" ];
   security.sudo.wheelNeedsPassword = false;
 
+  nix.settings.extra-experimental-features = ["flakes" "nix-command"];
+
   time.timeZone = "America/New_York";
 
   i18n.defaultLocale = "en_US.UTF-8";
