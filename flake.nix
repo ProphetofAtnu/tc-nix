@@ -48,7 +48,6 @@
             home-manager.users.thinclient = import ./homes/home.nix;
           }
           { nixpkgs.hostPlatform = "x86_64-linux"; }
-          ./hardware-configuration.nix
         ];
       };
     };

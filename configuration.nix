@@ -3,6 +3,7 @@
 {
   imports = [ # Include the results of the hardware scan.
     (modulesPath + "/profiles/minimal.nix")
+    ./hardware-configuration.nix
   ];
 
   boot.loader.systemd-boot.enable = true;
