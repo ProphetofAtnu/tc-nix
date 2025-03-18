@@ -34,5 +34,22 @@
           { nixpkgs.hostPlatform = "x86_64-linux"; }
         ];
       };
+      nixosConfigurations.physical = nixpkgs.lib.nixosSystem {
+        modules = [
+          ./configuration.nix
+          home-manager.nixosModules.home-manager
+          {
+            home-manager.extraSpecialArgs = {
+              self = self;
+            };
+            home-manager.sharedModules = [ self.homeManagerModules.openboxConfig ]; 
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.users.thinclient = import ./homes/home.nix;
+          }
+          { nixpkgs.hostPlatform = "x86_64-linux"; }
+          ./hardware-configuration.nix
+        ];
+      };
     };
 }
