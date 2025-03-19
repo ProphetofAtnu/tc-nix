@@ -1,4 +1,4 @@
-{ lib, pkgs, config, flake, home, ... }:
+{ lib, pkgs, config, flake, ... }:
 let cfg = config.openboxConfigure;
 in {
   options.openboxConfigure = {
@@ -8,11 +8,10 @@ in {
 
   config = lib.mkIf cfg.enable {
     home.file.".config/openbox/rc.xml" = {
-      # source = "${flake}/configs/openbox/rc.xml";
       source = "${flake}/configs/openbox/rc.xml";
     };
+
     home.file.".config/openbox/menu.xml" = {
-      # source = "${flake}/configs/openbox/menu.xml";
       source = "${flake}/configs/openbox/menu.xml";
     };
 

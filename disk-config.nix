@@ -1,7 +1,7 @@
 { lib, ... }: {
   disko.devices = {
     disk = {
-      my-disk = {
+      tc-disk = {
         device = "/dev/sda";
         type = "disk";
         content = {
@@ -18,11 +18,19 @@
               };
             };
             root = {
-              size = "100%";
+              end = "-8G";
               content = {
                 type = "filesystem";
                 format = "ext4";
                 mountpoint = "/";
+              };
+            };
+            swap = {
+              size = "100%";
+              content = {
+                type = "swap";
+                discardPolicy = "both";
+                resumeDevice = true;
               };
             };
           };

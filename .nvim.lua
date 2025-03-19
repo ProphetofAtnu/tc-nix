@@ -4,8 +4,17 @@ nvim_lsp.nixd.setup {
   settings = {
     nixd = {
       nixpkgs = {
-        expr = "import <nixpkgs> { }",
+        expr = 'import (builtins.getFlake (toString ./.)).inputs.nixpkgs {}'
       },
+      -- disko = {
+      --   expr = 'import (builtins.getFlake (toString ./.)).inputs.disko {}'
+      -- },
+      -- pkgs = {
+      --   expr = '(builtins.getFlake (toString ./.)).inputs.nixpkgs.legacyPackages.x86_64-linux'
+      -- },
+      -- home_manager = {
+      --   expr = '(builtins.getFlake (toString ./.)).inputs.home-manager'
+      -- },
       options = {
         nixos = {
           expr = '(builtins.getFlake (toString ./.)).nixosConfigurations.vm.options'

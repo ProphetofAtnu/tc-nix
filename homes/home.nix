@@ -1,6 +1,4 @@
-{ config, pkgs, home, ... }: {
-  # imports = [  ];
-  # imports = [ self.homeManagerModules.openboxConfig ];
+{ config, pkgs, ... }: {
 
   home.username = "thinclient";
   home.homeDirectory = "/home/thinclient";

@@ -3,7 +3,6 @@
 {
   imports = [ # Include the results of the hardware scan.
     (modulesPath + "/profiles/minimal.nix")
-    ./hardware-configuration.nix
   ];
 
   boot.loader.systemd-boot.enable = true;
@@ -11,20 +10,15 @@
   boot.blacklistedKernelModules = [ "pinctrl_elkhartlake" ];
   security.sudo.wheelNeedsPassword = false;
 
-  nix.settings.extra-experimental-features = ["flakes" "nix-command"];
+  nix.settings.extra-experimental-features = [ "flakes" "nix-command" ];
 
   time.timeZone = "America/New_York";
 
   i18n.defaultLocale = "en_US.UTF-8";
 
-  users.users.thinclient = {
-    isNormalUser = true;
-    hashedPassword = "";
-  };
-
   users.users.admin = {
     isNormalUser = true;
-    extraGroups = ["wheel"];
+    extraGroups = [ "wheel" ];
     hashedPassword = "";
   };
 
@@ -32,8 +26,9 @@
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIDtTbCP2ssWgSwhRxTyAG4+FuTsQLEkh93CaZpq9lQC DEFAULT"
   ];
 
-  services.xserver.enable = true;
+  thinClientUser.enable = true;
 
+  services.xserver.enable = true;
   services.xserver.windowManager.openbox.enable = true;
 
   services.xserver.displayManager.gdm = {
