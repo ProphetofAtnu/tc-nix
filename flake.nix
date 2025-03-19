@@ -16,31 +16,41 @@
     in
       {
       formatter.${system} = pkgs.nixfmt-classic;
-      homeManagerModules.openboxConfig = import ./modules/openboxConfigure.nix;
+      homeManagerModules.openboxConfig = import ./modules/hm/openboxConfigure.nix;
+      nixosModules.thinClientUser = import ./modules/nixos/thinClientUser.nix;
+
+#       nixosConfigurations.vm = nixpkgs.lib.nixosSystem {
+#         modules = [
+#           ./configuration.nix
+#           home-manager.nixosModules.home-manager
+#           {
+#             home-manager.extraSpecialArgs = {
+#               flake = self;
+#             };
+#             home-manager.sharedModules = [ self.homeManagerModules.openboxConfig ]; 
+#             home-manager.useGlobalPkgs = true;
+#             home-manager.useUserPackages = true;
+#             home-manager.users.thinclient = import ./homes/home.nix;
+#           }
+#           { nixpkgs.hostPlatform = "x86_64-linux"; }
+#         ];
+#       };
 
       nixosConfigurations.vm = nixpkgs.lib.nixosSystem {
         modules = [
           ./configuration.nix
-          home-manager.nixosModules.home-manager
-          {
-            home-manager.extraSpecialArgs = {
-              self = self;
-            };
-            home-manager.sharedModules = [ self.homeManagerModules.openboxConfig ]; 
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            home-manager.users.thinclient = import ./homes/home.nix;
-          }
+          self.nixosModules.thinClientUser
           { nixpkgs.hostPlatform = "x86_64-linux"; }
         ];
       };
+
       nixosConfigurations.physical = nixpkgs.lib.nixosSystem {
         modules = [
           ./configuration.nix
           home-manager.nixosModules.home-manager
           {
             home-manager.extraSpecialArgs = {
-              self = self;
+              flake = self;
             };
             home-manager.sharedModules = [ self.homeManagerModules.openboxConfig ]; 
             home-manager.useGlobalPkgs = true;
