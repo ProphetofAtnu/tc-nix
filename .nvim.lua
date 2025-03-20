@@ -17,10 +17,10 @@ nvim_lsp.nixd.setup {
       -- },
       options = {
         nixos = {
-          expr = '(builtins.getFlake (toString ./.)).nixosConfigurations.vm.options'
+          expr = '(builtins.getFlake (toString ./.)).nixosConfigurations.base.options'
         },
         home_manager = {
-          expr = '(builtins.getFlake (toString ./.)).nixosConfigurations.vm.options.home-manager.users.type.getSubOptions []'
+          expr = '(builtins.getFlake (toString ./.)).nixosConfigurations.base.options.home-manager.users.type.getSubOptions []'
         }
       }
     }

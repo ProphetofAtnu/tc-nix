@@ -6,22 +6,21 @@ in {
     (modulesPath + "/installer/cd-dvd/channel.nix")
   ];
 
-  # configure proprietary drivers
-  # boot.loader.systemd-boot.enable = true;
-  # boot.loader.efi.canTouchEfiVariables = true;
+  # 
   boot.blacklistedKernelModules = [ "pinctrl_elkhartlake" ];
   security.sudo.wheelNeedsPassword = false;
+  nix.settings.extra-experimental-features = [ "flakes" "nix-command" ];
 
   environment.etc."install-closure".source = "${closureInfo}/store-paths";
 
   environment.systemPackages = [
     (pkgs.writeShellScriptBin "install-nixos-unattended" ''
       set -eux
-      # Replace "/dev/disk/by-id/some-disk-id" with your actual disk ID
       exec ${pkgs.disko}/bin/disko-install --flake "${self}#physical" $@
     '')
 
   ];
+
   networking.hostName = "nixos-installer";
 
   users.users.root.openssh.authorizedKeys.keys = [
@@ -37,7 +36,8 @@ in {
 
   networking.useDHCP = lib.mkDefault true;
 
-  isoImage.storeContents = [ closureInfo ];
-  isoImage.squashfsCompression = "zstd -Xcompression-level 15";
 
+  # Include the closure of dependencies from the parent flake.
+  # Final disk image is ~8G, but works offline.
+  isoImage.storeContents = [ closureInfo ];
 }

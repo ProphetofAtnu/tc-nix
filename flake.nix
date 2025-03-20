@@ -44,7 +44,6 @@
           disko.nixosModules.disko
           ./disk-config.nix
           ./hardware-configuration.nix
-          { nixpkgs.hostPlatform = "x86_64-linux"; }
         ];
 
 
