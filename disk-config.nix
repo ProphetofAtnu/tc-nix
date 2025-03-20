@@ -1,7 +1,8 @@
 { lib, ... }: {
   disko.devices = {
     disk = {
-      tc-disk = {
+      main = {
+        imageSize = "20G";
         device = "/dev/sda";
         type = "disk";
         content = {

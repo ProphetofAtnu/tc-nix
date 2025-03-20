@@ -4,7 +4,7 @@ nvim_lsp.nixd.setup {
   settings = {
     nixd = {
       nixpkgs = {
-        expr = 'import (builtins.getFlake (toString ./.)).inputs.nixpkgs {}'
+        expr = 'import (builtins.getFlake (toString ./.)).inputs.nixpkgs { }'
       },
       -- disko = {
       --   expr = 'import (builtins.getFlake (toString ./.)).inputs.disko {}'
