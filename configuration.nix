@@ -1,13 +1,10 @@
 { config, lib, nixpkgs, modulesPath, pkgs, ... }:
 
 {
-<<<<<<< HEAD
   imports = [ # Include the results of the hardware scan.
     (modulesPath + "/profiles/minimal.nix")
   ];
 
-=======
->>>>>>> refs/remotes/origin/master
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.blacklistedKernelModules = [ "pinctrl_elkhartlake" ];
@@ -51,13 +48,8 @@
   ];
 
   services.openssh.enable = true;
+  services.passSecretService.enable = true;
 
-<<<<<<< HEAD
   system.stateVersion = "24.11"; # Did you read the comment?
-=======
-
-  system.stateVersion = "24.11";
-
->>>>>>> refs/remotes/origin/master
 }
 
