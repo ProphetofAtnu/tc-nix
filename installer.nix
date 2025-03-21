@@ -1,4 +1,4 @@
-{ self, config, lib, pkgs, modulesPath, ... }:
+{ self, lib, pkgs, modulesPath, ... }:
 let closureInfo = self.packages.x86_64-linux.closure;
 in {
   imports = [
@@ -26,6 +26,7 @@ in {
   users.users.root.openssh.authorizedKeys.keys = [
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIDtTbCP2ssWgSwhRxTyAG4+FuTsQLEkh93CaZpq9lQC DEFAULT"
   ];
+
   services.resolved = {
     enable = true;
     fallbackDns = [ "1.1.1.1" "1.0.0.1" ];
@@ -35,7 +36,6 @@ in {
   services.avahi.publish.addresses = true;
 
   networking.useDHCP = lib.mkDefault true;
-
 
   # Include the closure of dependencies from the parent flake.
   # Final disk image is ~8G, but works offline.
