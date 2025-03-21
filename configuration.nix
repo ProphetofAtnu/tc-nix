@@ -21,6 +21,7 @@
   ];
 
   thinClientUser.enable = true;
+  thinClientUser.allowPowerControl = true;
 
   services.xserver.enable = true;
   services.xserver.windowManager.openbox.enable = true;
@@ -29,14 +30,6 @@
     enable = true;
     autoSuspend = false;
     autoLogin.delay = 10;
-  };
-
-  services.displayManager = {
-    defaultSession = "none+openbox";
-    autoLogin = {
-      user = "thinclient";
-      enable = true;
-    };
   };
 
   environment.systemPackages = with pkgs; [
@@ -48,8 +41,6 @@
   ];
 
   services.openssh.enable = true;
-  services.passSecretService.enable = true;
-
   system.stateVersion = "24.11"; # Did you read the comment?
 }
 
