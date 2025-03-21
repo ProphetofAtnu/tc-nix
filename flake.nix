@@ -14,9 +14,6 @@
     in {
       formatter.${system} = pkgs.nixfmt-classic;
 
-      homeManagerModules.openboxConfig =
-        import ./modules/hm/openboxConfigure.nix;
-
       nixosModules.thinClient = import ./modules/nixos/thinClient.nix;
 
       nixosConfigurations.base = nixpkgs.lib.nixosSystem {
