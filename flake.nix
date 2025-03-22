@@ -9,10 +9,11 @@
 
   outputs = { self, nixpkgs, disko, ... }:
     let
-      system = "x86_64-linux";
-      pkgs = nixpkgs.legacyPackages.${system};
+      supportedSystems = [ "x86_64-linux" "aarch64-linux" ];
+      forAllSystems = nixpkgs.lib.genAttrs supportedSystems;
     in {
-      formatter.${system} = pkgs.nixfmt-classic;
+      formatter =
+        forAllSystems (system: nixpkgs.legacyPackages.${system}.nixfmt-classic);
 
       nixosModules.thinClient = import ./modules/nixos/thinClient.nix;
 
@@ -33,36 +34,41 @@
           ];
         };
 
-      packages.x86_64-linux.closure = let
-        dependencies = [
-          self.nixosConfigurations.physical.config.system.build.toplevel
-          self.nixosConfigurations.physical.config.system.build.diskoScript
-          self.nixosConfigurations.physical.config.system.build.diskoScript.drvPath
-          self.nixosConfigurations.physical.pkgs.stdenv.drvPath
-          self.nixosConfigurations.physical.pkgs.perlPackages.ConfigIniFiles
-          self.nixosConfigurations.physical.pkgs.perlPackages.FileSlurp
-          (self.nixosConfigurations.physical.pkgs.closureInfo {
-            rootPaths = [ ];
-          }).drvPath
-        ] ++ builtins.map (i: i.outPath) (builtins.attrValues self.inputs);
-      in pkgs.closureInfo { rootPaths = dependencies; };
-
-      packages.x86_64-linux.bincache = pkgs.mkBinaryCache {
-        rootPaths = [ self.packages.x86_64-linux.closure ];
-      };
-
       nixosConfigurations.installer = nixpkgs.lib.nixosSystem {
         specialArgs.self = self;
         modules =
           [ ./installer.nix { nixpkgs.hostPlatform = "x86_64-linux"; } ];
       };
 
-      packages.x86_64-linux.makeIso =
-        self.nixosConfigurations.installer.config.system.build.isoImage;
+      packages = forAllSystems (system: {
+        closure = let
+          dependencies = [
+            self.nixosConfigurations.physical.config.system.build.toplevel
+            self.nixosConfigurations.physical.config.system.build.diskoScript
+            self.nixosConfigurations.physical.config.system.build.diskoScript.drvPath
+            self.nixosConfigurations.physical.pkgs.stdenv.drvPath
+            self.nixosConfigurations.physical.pkgs.perlPackages.ConfigIniFiles
+            self.nixosConfigurations.physical.pkgs.perlPackages.FileSlurp
+            (self.nixosConfigurations.physical.pkgs.closureInfo {
+              rootPaths = [ ];
+            }).drvPath
+          ] ++ builtins.map (i: i.outPath) (builtins.attrValues self.inputs);
+        in nixpkgs.legacyPackages.${system}.closureInfo {
+          rootPaths = dependencies;
+        };
 
-      packages.x86_64-linux.runVm =
-        self.nixosConfigurations.physical.config.system.build.vmWithDisko;
+        bincache = nixpkgs.legacyPackages.${system}.mkBinaryCache {
+          rootPaths = [ self.packages.${system}.closure ];
+        };
 
-      packages.x86_64-linux.default = self.packages.x86_64-linux.runVm;
+        makeIso =
+          self.nixosConfigurations.installer.config.system.build.isoImage;
+
+        runVm =
+          self.nixosConfigurations.physical.config.system.build.vmWithDisko;
+
+        default = self.packages.${system}.runVm;
+      });
+
     };
 }
