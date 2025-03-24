@@ -13,6 +13,56 @@ let
       xset s off -dpms
     '';
   };
+  buildTcMenu = {}: 
+    {
+      text = ''
+      <?xml version="1.0" encoding="UTF-8"?>
+
+      <openbox_menu xmlns="http://openbox.org/3.4/menu">
+
+      <menu id="apps-term-menu" label="Terminals">
+        <item label="Xterm">
+          <action name="Execute"><command>xterm</command></action>
+        </item>
+      </menu>
+
+      <menu id="system-menu" label="System">
+        <item label="Openbox Configuration Manager">
+          <action name="Execute">
+            <command>obconf</command>
+            <startupnotify><enabled>yes</enabled></startupnotify>
+          </action>
+        </item>
+        <item label="Reconfigure Openbox">
+          <action name="Reconfigure" />
+        </item>
+      </menu>
+
+      <menu id="root-menu" label="Openbox 3">
+        <separator label="Applications" />
+        <menu id="apps-term-menu"/>
+        <menu id="system-menu"/>
+        <item label="Log Out">
+          <action name="Exit">
+            <prompt>yes</prompt>
+          </action>
+        </item>
+        <item label="Reboot">
+          <action name="Execute">
+            <execute>sudo systemctl reboot</execute>
+          </action>
+        </item>
+        <item label="Shut Down">
+          <action name="Execute">
+            <execute>sudo systemctl poweroff</execute>
+          </action>
+        </item>
+      </menu>
+
+      </openbox_menu>
+      '';
+
+  };
 in {
   options.thinClient = {
     enable = lib.mkEnableOption "Thin Client User account";
@@ -69,7 +119,7 @@ in {
     environment.etc = {
       "xdg/openbox/rc.xml" = { source = ./thinClientRc.xml; };
 
-      "xdg/openbox/menu.xml" = { source = ./thinClientMenu.xml; };
+      "xdg/openbox/menu.xml" = buildTcMenu {};
     };
 
     security.sudo.extraRules = lib.mkIf cfg.allowPowerControl [{
