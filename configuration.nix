@@ -1,4 +1,4 @@
-{ lib, modulesPath, pkgs, ... }:
+{ modulesPath, pkgs, ... }:
 
 {
   imports = [
@@ -22,16 +22,7 @@
   time.timeZone = "America/New_York";
   i18n.defaultLocale = "en_US.UTF-8";
 
-  users.users.root.openssh.authorizedKeys.keys = [
-    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIDtTbCP2ssWgSwhRxTyAG4+FuTsQLEkh93CaZpq9lQC DEFAULT"
-  ];
-
-  networking.enableIPv6 = lib.mkDefault false;
-  networking.useDHCP = lib.mkDefault true;
-
   environment.systemPackages = with pkgs; [ vim wget ];
-
-  services.openssh.enable = true;
 
   services.xserver.displayManager.gdm = {
     enable = true;

@@ -21,6 +21,7 @@
       nixosConfigurations = let
         base = nixpkgs.lib.nixosSystem {
           modules = [
+            ./prototype.nix
             ./configuration.nix
             self.nixosModules.thinClient
             { nixpkgs.hostPlatform = nixpkgs.lib.mkDefault "x86_64-linux"; }
@@ -32,6 +33,7 @@
         installer = nixpkgs.lib.nixosSystem {
           specialArgs.self = self;
           modules = [ 
+            ./prototype.nix
             ./installer.nix 
             { nixpkgs.hostPlatform = nixpkgs.lib.mkDefault "x86_64-linux"; }
           ];

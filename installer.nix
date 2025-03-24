@@ -23,10 +23,6 @@ in {
 
   networking.hostName = "nixos-installer";
 
-  users.users.root.openssh.authorizedKeys.keys = [
-    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIDtTbCP2ssWgSwhRxTyAG4+FuTsQLEkh93CaZpq9lQC DEFAULT"
-  ];
-
   services.resolved = {
     enable = true;
     fallbackDns = [ "1.1.1.1" "1.0.0.1" ];
