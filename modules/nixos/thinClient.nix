@@ -13,9 +13,8 @@ let
       xset s off -dpms
     '';
   };
-  buildTcMenu = {}: 
-    {
-      text = ''
+  buildTcMenu = { }: {
+    text = ''
       <?xml version="1.0" encoding="UTF-8"?>
 
       <openbox_menu xmlns="http://openbox.org/3.4/menu">
@@ -60,7 +59,7 @@ let
       </menu>
 
       </openbox_menu>
-      '';
+    '';
 
   };
 in {
@@ -119,7 +118,7 @@ in {
     environment.etc = {
       "xdg/openbox/rc.xml" = { source = ./thinClientRc.xml; };
 
-      "xdg/openbox/menu.xml" = buildTcMenu {};
+      "xdg/openbox/menu.xml" = buildTcMenu { };
     };
 
     security.sudo.extraRules = lib.mkIf cfg.allowPowerControl [{

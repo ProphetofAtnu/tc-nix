@@ -9,6 +9,7 @@
 
   outputs = { self, nixpkgs, disko, ... }:
     let
+      lib = nixpkgs.lib;
       supportedSystems = [ "x86_64-linux" "aarch64-linux" ];
       forAllSystems = nixpkgs.lib.genAttrs supportedSystems;
     in {
@@ -17,28 +18,30 @@
 
       nixosModules.thinClient = import ./modules/nixos/thinClient.nix;
 
-      nixosConfigurations.base = nixpkgs.lib.nixosSystem {
-        modules = [
-          ./configuration.nix
-          self.nixosModules.thinClient
-          { nixpkgs.hostPlatform = nixpkgs.lib.mkDefault "x86_64-linux"; }
-        ];
-      };
-
-      nixosConfigurations.physical =
-        self.nixosConfigurations.base.extendModules {
+      nixosConfigurations = let
+        base = nixpkgs.lib.nixosSystem {
           modules = [
-            disko.nixosModules.disko
-            ./disk-config.nix
-            ./hardware-configuration.nix
+            ./configuration.nix
+            self.nixosModules.thinClient
+            { nixpkgs.hostPlatform = nixpkgs.lib.mkDefault "x86_64-linux"; }
           ];
         };
-
-      nixosConfigurations.installer = nixpkgs.lib.nixosSystem {
-        specialArgs.self = self;
-        modules =
-          [ ./installer.nix { nixpkgs.hostPlatform = "x86_64-linux"; } ];
-      };
+        physical = self.nixosConfigurations.base.extendModules {
+          modules = [ disko.nixosModules.disko ./disk-config.nix ];
+        };
+        installer = nixpkgs.lib.nixosSystem {
+          specialArgs.self = self;
+          modules = [ 
+            ./installer.nix 
+            { nixpkgs.hostPlatform = nixpkgs.lib.mkDefault "x86_64-linux"; }
+          ];
+        };
+      in lib.mergeAttrs { inherit base physical installer; }
+      (builtins.listToAttrs (map (module: {
+        name = "${lib.removeSuffix ".nix" module}";
+        value = physical.extendModules { modules = [ ./hosts/${module} ]; };
+      }) (builtins.filter (lib.hasSuffix ".nix")
+        (builtins.attrNames (builtins.readDir ./hosts)))));
 
       packages = forAllSystems (system: {
         closure = let
@@ -68,6 +71,7 @@
           self.nixosConfigurations.physical.config.system.build.vmWithDisko;
 
         default = self.packages.${system}.runVm;
+
       });
 
     };
