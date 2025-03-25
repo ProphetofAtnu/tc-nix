@@ -1,4 +1,4 @@
-{lib, ...}:
+{ lib, ... }:
 
 {
   users.users.root.openssh.authorizedKeys.keys = [

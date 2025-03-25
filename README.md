@@ -22,12 +22,12 @@ nix build '.#makeIso'
 
 ## Using the Installer
 
-After booting the installer, the command `install-nixos-unattended` will be available. Needs to be run by root or with sudo.
+After booting the installer, the command `unattended-install` will be available. Needs to be run by root or with sudo.
 
 ```sh
-install-nixos-unattended --disk main [target device]
+unattended-install --target /dev/[disk] -- [optional disko-install flags]
 ```
 
-`install-nixos-unattended` is a simple a wrapper for `disko-install`. Other flags can be viewed by passing invoking `install-nixos-unattended --help`.
+`unattended-install` is a simple a wrapper for `disko-install`.
 
 See [disko-install](https://github.com/nix-community/disko/blob/master/docs/disko-install.md).

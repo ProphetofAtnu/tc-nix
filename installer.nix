@@ -1,6 +1,5 @@
-{ self, lib, pkgs, modulesPath, ... }:
-let closureInfo = self.packages.x86_64-linux.closure;
-in {
+{ lib, pkgs, modulesPath, ... }:
+{
   imports = [
     (modulesPath + "/installer/cd-dvd/installation-cd-minimal.nix")
     (modulesPath + "/installer/cd-dvd/channel.nix")
@@ -11,14 +10,13 @@ in {
   security.sudo.wheelNeedsPassword = false;
   nix.settings.extra-experimental-features = [ "flakes" "nix-command" ];
 
-  environment.etc."install-closure".source = "${closureInfo}/store-paths";
+  environment.etc."install-closure".source =
+    "${pkgs.thinClientClosure}/store-paths";
 
-  environment.systemPackages = [
-    (pkgs.writeShellScriptBin "install-nixos-unattended" ''
-      set -eux
-      exec ${pkgs.disko}/bin/disko-install --flake "${self}#physical" $@
-    '')
-
+  environment.systemPackages = [ 
+    pkgs.unattendedInstaller 
+    # I can't seem to get rid of this without causing an issue with the bootloader installation?
+    pkgs.thinClientClosure
   ];
 
   networking.hostName = "nixos-installer";
@@ -35,5 +33,5 @@ in {
 
   # Include the closure of dependencies from the parent flake.
   # Final disk image is ~8G, but works offline.
-  isoImage.storeContents = [ closureInfo ];
+  isoImage.storeContents = [ pkgs.thinClientClosure ];
 }
