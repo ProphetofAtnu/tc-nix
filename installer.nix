@@ -16,7 +16,6 @@
   environment.systemPackages = [ 
     pkgs.unattendedInstaller 
     # I can't seem to get rid of this without causing an issue with the bootloader installation?
-    pkgs.thinClientClosure
   ];
 
   networking.hostName = "nixos-installer";
@@ -33,5 +32,5 @@
 
   # Include the closure of dependencies from the parent flake.
   # Final disk image is ~8G, but works offline.
-  isoImage.storeContents = [ pkgs.thinClientClosure ];
+  # isoImage.storeContents = [ pkgs.thinClientClosure ];
 }

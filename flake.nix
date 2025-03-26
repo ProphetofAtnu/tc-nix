@@ -66,8 +66,6 @@
               self.nixosConfigurations.physical.config.system.build.diskoScript
               self.nixosConfigurations.physical.config.system.build.diskoScript.drvPath
               self.nixosConfigurations.physical.pkgs.stdenv.drvPath
-              # Why does it have to check python syntax to build the bootloader? ;-;
-              # https://github.com/NixOS/nixpkgs/blob/db6ea9d70bffd1041e9fea643d725d48a568ba3c/nixos/modules/system/boot/loader/systemd-boot/systemd-boot.nix#L25
               self.nixosConfigurations.physical.pkgs.perlPackages.ConfigIniFiles
               self.nixosConfigurations.physical.pkgs.perlPackages.FileSlurp
               (self.nixosConfigurations.physical.pkgs.closureInfo {
