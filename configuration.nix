@@ -1,4 +1,4 @@
-{ modulesPath, pkgs, ... }:
+{ lib, modulesPath, pkgs, ... }:
 
 {
   imports = [
@@ -10,6 +10,14 @@
 
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+
+   # boot.loader.grub.enable = true;
+   # boot.loader.grub.efiSupport = true;
+   # boot.loader.grub.device = lib.mkDefault "/dev/sda1";
+   # boot.loader.grub.device = lib.mkDefault "nodev";
+   # boot.loader.grub.efiInstallAsRemovable = false;
+   # boot.loader.efi.canTouchEfiVariables = true;
+
   boot.blacklistedKernelModules = [ "pinctrl_elkhartlake" ];
   boot.kernelParams = [ "net.ifnames=1" ];
 

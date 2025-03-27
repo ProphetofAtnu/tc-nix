@@ -1,4 +1,4 @@
-{ lib, pkgs, modulesPath, ... }:
+{ self, lib, pkgs, modulesPath, ... }:
 {
   imports = [
     (modulesPath + "/installer/cd-dvd/installation-cd-minimal.nix")
@@ -13,9 +13,14 @@
   environment.etc."install-closure".source =
     "${pkgs.thinClientClosure}/store-paths";
 
+  environment.etc."creator-flake".source = self;
+
   environment.systemPackages = [ 
     pkgs.unattendedInstaller 
     # I can't seem to get rid of this without causing an issue with the bootloader installation?
+    pkgs.makePartitions
+    pkgs.installToDisk
+    pkgs.disko
   ];
 
   networking.hostName = "nixos-installer";

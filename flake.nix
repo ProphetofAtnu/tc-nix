@@ -3,7 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-24.11";
-    disko.url = "github:nix-community/disko";
+    disko.url = "github:nix-community/disko/latest";
     disko.inputs.nixpkgs.follows = "nixpkgs";
   };
 
@@ -18,6 +18,7 @@
         forAllSystems (system: nixpkgs.legacyPackages.${system}.nixfmt-classic);
 
       nixosModules.thinClient = import ./modules/nixos/thinClient.nix;
+      diskoConfigurations.client = import ./disk-config.nix;
 
       nixosConfigurations = let
         base = nixpkgs.lib.nixosSystem {
@@ -25,11 +26,12 @@
             ./prototype.nix
             ./configuration.nix
             self.nixosModules.thinClient
+            disko.nixosModules.disko 
             { nixpkgs.hostPlatform = nixpkgs.lib.mkDefault "x86_64-linux"; }
           ];
         };
         physical = self.nixosConfigurations.base.extendModules {
-          modules = [ disko.nixosModules.disko ./disk-config.nix ];
+          modules = [ ./disk-config.nix ];
         };
         installer = nixpkgs.lib.nixosSystem {
           specialArgs.self = self;
@@ -44,6 +46,19 @@
                     self.packages.${super.stdenv.hostPlatform.system}.closure;
                   unattendedInstaller =
                     self.packages.${super.stdenv.hostPlatform.system}.unattendedInstaller;
+
+                  ### *** BIG HACK HERE DO NOT USE ***
+                  makePartitions = super.writeShellApplication {
+                    name = "create-partitions";
+                    text = self.nixosConfigurations.physical.config.system.build.diskoScript;
+                  };
+
+                  installToDisk = super.writeShellApplication {
+                    name = "install-wrapper";
+                    text = ''
+                      nixos-install --system ${self.nixosConfigurations.physical.config.system.build.toplevel} --no-root-password
+                    '';
+                  };
                 })
               ];
             }
@@ -63,9 +78,7 @@
             dependencies = [
               self.nixosConfigurations.physical.config.system.build.toplevel
               self.nixosConfigurations.physical.config.system.build.installBootLoader
-              self.nixosConfigurations.physical.config.system.build.diskoScript
-              self.nixosConfigurations.physical.config.system.build.diskoScript.drvPath
-              self.nixosConfigurations.physical.pkgs.stdenv.drvPath
+              # self.nixosConfigurations.physical.config.system.build.diskoScript
               self.nixosConfigurations.physical.pkgs.perlPackages.ConfigIniFiles
               self.nixosConfigurations.physical.pkgs.perlPackages.FileSlurp
               (self.nixosConfigurations.physical.pkgs.closureInfo {
