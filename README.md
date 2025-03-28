@@ -1,7 +1,3 @@
-# Notes for Others
-
-If you're hacking on this yourself, replace the SSH public key for root in `configuration.nix` and `installer.nix` with your own to allow remote login.
-
 # Layout
 
 This repo is structured to be forked and used for managing and updating a fleet of thin clients in the field. 
