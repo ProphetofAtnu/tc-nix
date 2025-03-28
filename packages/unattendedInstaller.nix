@@ -1,11 +1,11 @@
 { pkgs, flake, ... }:
 
 pkgs.writeShellApplication {
-  name = "unattended-install";
+  name = "online-unattended-install";
   runtimeInputs = [ pkgs.disko flake ];
 
   text = ''
-    OPTIONS=$(getopt -o 'ht:c:' --long 'help,target:,configuration:' -n 'unattended-install' -- "$@")
+    OPTIONS=$(getopt -o 'ht:c:' --long 'help,target:,configuration:' -n 'online-unattended-install' -- "$@")
 
     eval set -- "$OPTIONS"
 

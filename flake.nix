@@ -24,10 +24,9 @@
         base = nixpkgs.lib.nixosSystem {
           modules = [
             ./prototype.nix
-            ./configuration.nix
+            ./base.nix
             self.nixosModules.thinClient
-            disko.nixosModules.disko 
-            { nixpkgs.hostPlatform = nixpkgs.lib.mkDefault "x86_64-linux"; }
+            disko.nixosModules.disko
           ];
         };
         physical = self.nixosConfigurations.base.extendModules {
@@ -38,7 +37,6 @@
           modules = [
             ./prototype.nix
             ./installer.nix
-            { nixpkgs.hostPlatform = nixpkgs.lib.mkDefault "x86_64-linux"; }
             {
               nixpkgs.overlays = [
                 (final: super: {
@@ -47,18 +45,10 @@
                   unattendedInstaller =
                     self.packages.${super.stdenv.hostPlatform.system}.unattendedInstaller;
 
-                  ### *** BIG HACK HERE DO NOT USE ***
-                  makePartitions = super.writeShellApplication {
-                    name = "create-partitions";
-                    text = self.nixosConfigurations.physical.config.system.build.diskoScript;
-                  };
-
-                  installToDisk = super.writeShellApplication {
-                    name = "install-wrapper";
-                    text = ''
-                      nixos-install --system ${self.nixosConfigurations.physical.config.system.build.toplevel} --no-root-password
-                    '';
-                  };
+                  createTcPartitionsScript =
+                    self.packages.${super.stdenv.hostPlatform.system}.createTcPartitionsScript;
+                  installTcToDiskScript =
+                    self.packages.${super.stdenv.hostPlatform.system}.installTcToDiskScript;
                 })
               ];
             }
@@ -78,7 +68,6 @@
             dependencies = [
               self.nixosConfigurations.physical.config.system.build.toplevel
               self.nixosConfigurations.physical.config.system.build.installBootLoader
-              # self.nixosConfigurations.physical.config.system.build.diskoScript
               self.nixosConfigurations.physical.pkgs.perlPackages.ConfigIniFiles
               self.nixosConfigurations.physical.pkgs.perlPackages.FileSlurp
               (self.nixosConfigurations.physical.pkgs.closureInfo {
@@ -93,6 +82,14 @@
             pkgs.callPackage ./packages/unattendedInstaller.nix {
               flake = self;
             };
+
+          createTcPartitionsScript =
+            pkgs.callPackage ./packages/createTcPartitions.nix {
+              flake = self;
+            };
+
+          installTcToDiskScript =
+            pkgs.callPackage ./packages/installTcToDisk.nix { flake = self; };
 
           bincache = pkgs.mkBinaryCache {
             rootPaths = [ self.packages.${system}.closure ];

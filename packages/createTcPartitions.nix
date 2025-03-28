@@ -1,4 +1,4 @@
-{pkgs, flake, ...}:
+{ pkgs, flake, ... }:
 
 pkgs.writeShellApplication {
   name = "create-partitions";

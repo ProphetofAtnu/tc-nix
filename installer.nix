@@ -1,5 +1,4 @@
-{ self, lib, pkgs, modulesPath, ... }:
-{
+{ self, lib, pkgs, modulesPath, ... }: {
   imports = [
     (modulesPath + "/installer/cd-dvd/installation-cd-minimal.nix")
     (modulesPath + "/installer/cd-dvd/channel.nix")
@@ -15,16 +14,17 @@
 
   environment.etc."creator-flake".source = self;
 
-  environment.systemPackages = [ 
-    pkgs.unattendedInstaller 
+  environment.systemPackages = [
+    pkgs.unattendedInstaller
     # I can't seem to get rid of this without causing an issue with the bootloader installation?
-    pkgs.makePartitions
-    pkgs.installToDisk
+    pkgs.createTcPartitionsScript
+    pkgs.installTcToDiskScript
     pkgs.disko
   ];
 
   networking.hostName = "nixos-installer";
 
+  services.lvm.enable = false;
   services.resolved = {
     enable = true;
     fallbackDns = [ "1.1.1.1" "1.0.0.1" ];
@@ -37,5 +37,5 @@
 
   # Include the closure of dependencies from the parent flake.
   # Final disk image is ~8G, but works offline.
-  # isoImage.storeContents = [ pkgs.thinClientClosure ];
+  isoImage.storeContents = [ pkgs.thinClientClosure ];
 }
